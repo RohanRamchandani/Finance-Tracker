@@ -1,0 +1,21 @@
+# Files copied into every new git worktree Claude Code creates.
+#
+# Why this file exists: .gitignore excludes `.env*`, so a fresh worktree starts
+# without any env files and nothing can reach the database — `npm run dev`,
+# `db:migrate`, `db:seed` and `db:studio` all fail on a missing DATABASE_URL.
+# Listing them here copies them in automatically.
+#
+# Format: gitignore-style glob patterns, one per line, relative to the repo root.
+# Only gitignored/untracked files need listing — anything committed already
+# arrives with the worktree via git (that includes .env.example).
+
+# Database connection string and any other runtime secrets.
+# Read by both the Next.js app and the Prisma CLI.
+.env
+
+# Per-machine / per-worktree overrides for the Next.js app.
+# NOTE: the Prisma CLI does NOT read this file — see the comments in .env.local.
+.env.local
+
+# Environment-specific local overrides, e.g. .env.development.local
+.env.*.local

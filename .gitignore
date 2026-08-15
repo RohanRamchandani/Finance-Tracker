@@ -45,3 +45,8 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# claude code — worktrees Claude creates live here; they're full checkouts of
+# this repo and would otherwise clutter `git status` in the main checkout.
+# Note .claude/skills/ IS tracked, so don't ignore .claude/ wholesale.
+/.claude/worktrees/
