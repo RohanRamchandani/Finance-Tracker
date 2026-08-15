@@ -1,0 +1,65 @@
+// Finance Tracker — Prisma schema
+// Feature 1: Expense & Earnings Dashboard (manual entry).
+// Money is stored as Decimal (NUMERIC in Postgres), never floating point.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+// A user of the app. Even in solo-use v1 (no login yet), every record hangs off
+// a User so multi-user auth can be layered on later without a data migration.
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  categories   Category[]
+  transactions Transaction[]
+}
+
+// A spending or earning bucket (e.g. "Groceries", "Salary"). Categories are
+// typed so income and expense options stay separate. Presets are seeded;
+// users can add their own later.
+model Category {
+  id           String          @id @default(uuid())
+  name         String
+  type         TransactionType
+  isPreset     Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  // A user can't have two categories with the same name + type.
+  @@unique([userId, name, type])
+  @@index([userId])
+}
+
+// A single manually-entered income or expense.
+model Transaction {
+  id          String          @id @default(uuid())
+  amount      Decimal         @db.Decimal(12, 2)
+  description String
+  type        TransactionType
+  occurredAt  DateTime // when the money actually moved (user-set)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId, occurredAt])
+  @@index([categoryId])
+}

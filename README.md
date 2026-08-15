@@ -8,7 +8,15 @@ This is being built primarily for the creator's own use first. More features wil
 
 ## Status
 
-**Current phase:** Building Feature 1 (Expense & Earnings Dashboard). For v1, transactions are entered manually — bank integration (Plaid or equivalent) is a later phase, not part of the initial build.
+**Current phase:** Building Feature 1 (Expense & Earnings Dashboard). The dashboard is scaffolded and building — the app, database schema, API, and UI are in place. The remaining step to run it is connecting a Supabase database (see **Getting Started** below). For v1, transactions are entered manually — bank integration (Plaid or equivalent) is a later phase, not part of the initial build.
+
+**What's built so far (Feature 1):**
+- Next.js (App Router, TypeScript) app with a dashboard at `/`
+- Prisma schema: `User`, `Category`, `Transaction` (money stored as `Decimal`)
+- API routes: create/list/delete transactions, list categories (with validation)
+- Dashboard UI: monthly income/expenses/net summary, add-transaction form, recent transactions list, spending-by-category breakdown
+- Seed script with preset categories + sample data
+- Single default user (no login yet — auth is a later phase)
 
 ## Build Order
 
@@ -82,6 +90,41 @@ Locked decisions — see `CLAUDE.md` for the full rationale and build convention
 - **Money values:** stored as Decimal/Numeric (Prisma's Decimal type) — never floating-point
 - **Future AI/ML component:** a separate Python microservice, scoped specifically to the AI-powered investment evaluation tool (Feature 5). This is the only place Python enters the stack, and it isn't built until that feature phase is reached.
 
+## Getting Started
+
+Prerequisites: Node.js 20+ and a free [Supabase](https://supabase.com) project.
+
+1. **Install dependencies** (also generates the Prisma client):
+   ```bash
+   npm install
+   ```
+
+2. **Connect Supabase.** Copy the env template and paste your connection string:
+   ```bash
+   cp .env.example .env
+   ```
+   In the Supabase dashboard: your project → **Connect** → **ORMs / Connection string**. Use the **direct** connection or the **Session** pooler (port 5432) — both support migrations. Keep `?sslmode=require`, and URL-encode any special characters in the password. Paste it as `DATABASE_URL` in `.env`.
+
+3. **Create the database tables** (generates and applies the first migration):
+   ```bash
+   npm run db:migrate
+   ```
+
+4. **Seed preset categories + sample data** (optional but recommended for a non-empty dashboard):
+   ```bash
+   npm run db:seed
+   ```
+
+5. **Run the app:**
+   ```bash
+   npm run dev
+   ```
+   Open http://localhost:3000.
+
+Handy scripts: `npm run db:studio` (browse data in Prisma Studio), `npm run build` (production build), `npm run lint`.
+
+> **Note on Prisma 7:** this project uses Prisma's new driver-adapter setup (`@prisma/adapter-pg` + `pg`), the `prisma-client` generator (output at `src/generated/prisma`, git-ignored and regenerated on install), and `prisma.config.ts` for datasource/env config. Re-run `npm run db:generate` after any schema change.
+
 ## Open Questions
 
 Tracked here so they aren't forgotten. Update/remove as decisions are made.
@@ -99,3 +142,4 @@ Tracked here so they aren't forgotten. Update/remove as decisions are made.
 
 - **2026-08-14** — Project initialized. README and CLAUDE.md created from initial feature spec. No code written yet.
 - **2026-08-14** — Tech stack locked in: Next.js (React + API routes) full-stack, TypeScript, PostgreSQL via Supabase, Prisma ORM. Platform decided as web app. Python scoped exclusively to a future AI investment-evaluation microservice. Build started on Feature 1 (Dashboard), v1 using manual transaction entry (bank integration deferred).
+- **2026-08-14** — Feature 1 dashboard scaffolded: Next.js 16 (App Router, TS strict) + Prisma 7 (driver adapters, `prisma-client` generator) schema for User/Category/Transaction with Decimal money, API routes for transaction CRUD + categories, and a dashboard UI (monthly summary, add-transaction form, recent list, category breakdown). Single default user (no auth yet). Typecheck + production build + lint all pass; pending a Supabase connection to run end-to-end.
