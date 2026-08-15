@@ -8,7 +8,7 @@ This is being built primarily for the creator's own use first. More features wil
 
 ## Status
 
-**Current phase:** Planning / feature definition. No pillar has been built yet. Feature 1 (Dashboard) is next up.
+**Current phase:** Building Feature 1 (Expense & Earnings Dashboard). For v1, transactions are entered manually — bank integration (Plaid or equivalent) is a later phase, not part of the initial build.
 
 ## Build Order
 
@@ -68,17 +68,29 @@ The intelligence layer tying everything together. A custom-trained model (not ju
 
 ## Platform
 
-Not yet decided — web app vs. desktop/mobile. Decision should be based on wherever the creator would find it most accessible day-to-day.
+**Decided:** Web app, built as a full-stack Next.js application.
+
+## Tech Stack
+
+Locked decisions — see `CLAUDE.md` for the full rationale and build conventions.
+
+- **Frontend:** React, via Next.js
+- **Backend:** Next.js API routes (no separate backend server for the main app)
+- **Database:** PostgreSQL, hosted on Supabase
+- **ORM:** Prisma (no raw SQL unless there's a documented reason)
+- **Language:** TypeScript throughout, strict mode preferred
+- **Money values:** stored as Decimal/Numeric (Prisma's Decimal type) — never floating-point
+- **Future AI/ML component:** a separate Python microservice, scoped specifically to the AI-powered investment evaluation tool (Feature 5). This is the only place Python enters the stack, and it isn't built until that feature phase is reached.
 
 ## Open Questions
 
 Tracked here so they aren't forgotten. Update/remove as decisions are made.
 
-- Bank integration approach for instant transaction sync (e.g., Plaid or equivalent)
+- Bank integration approach for instant transaction sync (e.g., Plaid or equivalent) — deferred past v1
 - Is investment evaluation limited to stocks, or also real estate, business ventures, etc.?
-- Is budgeting/goal-setting (per-category spend limits) in scope alongside pure tracking?
+- Is budgeting/goal-setting (per-category spend limits) in scope for v1 or a later phase?
 - Does investment evaluation tie into a tracked net worth/portfolio, or stay a standalone "should I invest in X" calculator?
-- Tech stack (frontend, backend, database, live market data source)
+- Live market data source/provider (which API for stocks, gold, silver, etc.)
 - Approach to training the custom AI model (what data, what framework, how much is realistic to build solo)
 - What does "financial freedom" mean in calculable terms for this app (multiple of annual expenses? net worth target? passive income covering costs? needs a defined formula)
 - How much does risk tolerance / user input (age, goals, risk appetite) factor into save-vs-invest recommendations, and where does that get captured?
@@ -86,3 +98,4 @@ Tracked here so they aren't forgotten. Update/remove as decisions are made.
 ## Changelog
 
 - **2026-08-14** — Project initialized. README and CLAUDE.md created from initial feature spec. No code written yet.
+- **2026-08-14** — Tech stack locked in: Next.js (React + API routes) full-stack, TypeScript, PostgreSQL via Supabase, Prisma ORM. Platform decided as web app. Python scoped exclusively to a future AI investment-evaluation microservice. Build started on Feature 1 (Dashboard), v1 using manual transaction entry (bank integration deferred).

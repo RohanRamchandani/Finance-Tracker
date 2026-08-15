@@ -1,41 +1,53 @@
-# CLAUDE.md
+# CLAUDE.md — Finance Tracker Project Context
 
-Instructions for Claude when working in this repository. Read this at the start of every session before doing anything else — it is the source of truth for what this project is and how to work on it.
+## What this is
 
-## What this project is
+A personal finance web app, being built for the creator's own use first. Core goal: give clear, real-time visibility into income/spending, then layer on investment evaluation tools, live market data, a savings/financial-freedom planner, and eventually a custom-trained AI model that ties it all together.
 
-A personal finance and investment intelligence app, built by Rohan primarily for his own use. The goal is not just to track spending — it's to give financial clarity and, eventually, personalized AI-driven guidance on spending, saving, and investing.
+Full feature breakdown lives in `README.md` in this repo — read that for the complete feature list and long-term roadmap. This file is for day-to-day build context and conventions.
 
-See `README.md` for the full feature spec, build order, and open questions. **Keep README.md up to date as decisions get made** — it's the living project doc that future sessions rely on. This file (CLAUDE.md) is for *how to work*, not *what the features are*; don't duplicate feature detail here, link to README.md instead.
+@README.md
 
-## Build order — respect it
+## Current phase
 
-The five pillars are intentionally sequenced. Do not jump ahead to a later pillar (e.g. building AI insights or live market data) before the earlier ones are functional, unless Rohan explicitly asks for it:
+Building **Feature 1: Expense & Earnings Dashboard** — the foundation. Nothing else is built yet.
 
-1. Dashboard (expense/earnings tracking + insights) — **current focus**
-2. Investment Evaluation Tool (TVM, NPV, IRR, payback period, risk-adjusted returns)
-3. Live Market & Multi-Asset Data
-4. Savings & Financial Freedom Planner (bridges #1 and #2/#3)
-5. Custom AI Model
+For v1, transactions are entered manually (no bank integration yet — that's a later phase via Plaid or equivalent).
 
-Check the "Status" section of README.md for what phase we're actually in before assuming.
+## Tech stack — STRICT, do not deviate
 
-## How Rohan wants to work
+These are locked decisions. Do not suggest, substitute, or default to alternative frameworks, databases, or libraries without being explicitly asked to reconsider.
 
-- This is a learning project as much as a product — Rohan is using personal projects like this to build ML/AI/data analytics/visualization skills. Prefer explaining the *why* behind non-obvious technical choices, not just implementing silently.
-- No pillar has been built yet as of project init (2026-08-14). Tech stack, platform (web vs. desktop/mobile), and data sources are all still open — don't assume a stack that hasn't been decided. Check the Open Questions section in README.md before making architectural decisions, and flag when a task requires resolving one of those questions first.
-- Accuracy matters more than speed for anything touching real financial calculations (TVM/NPV/IRR, savings math, spending analysis) — Rohan intends to use this for real personal financial decisions. Don't approximate or hand-wave financial formulas; get them right, cite the standard formula, and test them against known examples.
-- When a new architectural or product decision gets made during a session, update README.md's relevant section (and Open Questions / Changelog) as part of that work, not as an afterthought.
+- **Frontend:** React, via Next.js
+- **Backend:** Next.js API routes (comes bundled with the Next.js package — no separate backend framework/server for the main app)
+- **Database:** PostgreSQL, hosted on Supabase specifically (not Neon, not Vercel Postgres, not any other provider)
+- **ORM:** Prisma — all schema and queries go through Prisma, not raw SQL, unless there's a specific documented reason to drop down
+- **Language:** TypeScript throughout the Next.js app (not plain JS) — money-handling code benefits from strict typing
+- **Money values:** Store as Decimal/Numeric in Postgres (via Prisma's Decimal type), never as floating-point numbers — avoids rounding errors
+- **Future AI/ML component:** a separate Python microservice, built specifically for the AI-powered investment evaluation tool (machine learning model to assess investment decisions). This is the only place Python enters the stack — it is not a replacement for the Next.js backend, and it is not built until that feature phase is reached. The Next.js backend will call this microservice over HTTP when it exists.
 
-## Sensitive data
+## Architecture decisions & reasoning
 
-This app will eventually handle bank-linked transaction data (via Plaid or similar) and other personal financial information.
+- Chose Next.js full-stack (React + API routes, one language, one deployment) over a separate React + Python backend to prioritize build speed for v1.
+- Python is deliberately scoped to a single future responsibility: the ML-based investment evaluation microservice. It is not used anywhere else in the stack, and is not introduced until that feature is actively being built.
+- Supabase was chosen over other Postgres hosts (e.g. Neon) as the single source of truth for the database — do not introduce a second hosting provider.
 
-- Never commit real credentials, API keys, account numbers, or actual transaction data to the repo. Use `.env` / secrets management once a stack is chosen, and make sure `.gitignore` excludes them.
-- When building/testing bank-linking or transaction features, use sandbox/mock data, not Rohan's real account data, unless he explicitly says otherwise.
+## Data model notes (for Feature 1)
 
-## Working conventions
+Core entities needed:
 
-- Don't add features or infrastructure for a pillar before its predecessor pillar is functional — check README's Status section.
-- When you resolve one of the Open Questions (stack, bank integration approach, "financial freedom" formula, etc.), record the decision in README.md and remove it from Open Questions.
-- Keep this file (CLAUDE.md) about process/instructions; keep README.md about product/feature state. If something belongs in both, put the detail in README.md and link to it from here.
+- **Transaction** — amount (Decimal), merchant/description, category, timestamp, type (income/expense)
+- **Category** — name, type (income/expense), user-defined or preset
+- **User** — for auth, even in solo-use v1 (matters more once bank integration is added later)
+
+## Conventions
+
+- Prefer TypeScript strict mode
+- Keep API routes and business logic (e.g. spending calculations) separate from UI components
+- No bank/Plaid integration yet — don't add it prematurely; manual entry only for now
+
+## Open questions (not yet decided — see README.md for full list)
+
+- Budgeting/spend-limit features in scope for v1 or later?
+- Exact "financial freedom" formula for Feature 4
+- Bank integration approach when that phase starts
