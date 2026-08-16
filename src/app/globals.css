@@ -335,3 +335,212 @@ body {
   border-radius: 999px;
   background: var(--accent);
 }
+
+/* --- Futuristic finance donut --- */
+.fin-panel {
+  --fin-surface-1: #0b1020;
+  --fin-surface-2: #060911;
+  --fin-border: rgba(125, 211, 252, 0.18);
+  --fin-text: #eef4ff;
+  --fin-text-muted: #8ea3c7;
+  --fin-track: rgba(148, 178, 224, 0.14);
+  --fin-spend: #f43f5e;
+  --fin-spend-glow: #fb7185;
+  --fin-save: #1499b3;
+  --fin-save-glow: #5eead4;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    120% 140% at 15% 0%,
+    #101a35 0%,
+    var(--fin-surface-1) 45%,
+    var(--fin-surface-2) 100%
+  );
+  border: 1px solid var(--fin-border);
+  box-shadow:
+    0 0 0 1px rgba(94, 234, 212, 0.04) inset,
+    0 20px 50px -25px rgba(20, 153, 179, 0.35),
+    var(--shadow);
+  color: var(--fin-text);
+}
+
+.fin-panel::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(20, 153, 179, 0.14) 90deg,
+    transparent 180deg,
+    rgba(244, 63, 94, 0.1) 270deg,
+    transparent 360deg
+  );
+  animation: fin-halo-spin 22s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fin-halo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fin-head {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.fin-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fin-save-glow);
+}
+
+.fin-income-caption {
+  font-size: 0.78rem;
+  color: var(--fin-text-muted);
+}
+
+.fin-donut-wrap {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  margin: 0.25rem auto 1.1rem;
+}
+
+.fin-donut-wrap svg {
+  display: block;
+  animation: fin-pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fin-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+}
+
+.fin-arc-pulse {
+  animation: fin-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes fin-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.fin-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 0.9rem;
+}
+
+.fin-center-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fin-text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.fin-center-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  color: var(--fin-text);
+}
+
+.fin-center-value.pos {
+  color: var(--fin-save-glow);
+}
+.fin-center-value.neg {
+  color: var(--fin-spend-glow);
+}
+
+.fin-center-caption {
+  font-size: 0.68rem;
+  color: var(--fin-text-muted);
+  margin-top: 0.25rem;
+}
+
+.fin-legend {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.fin-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+}
+
+.fin-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fin-dot-spend {
+  background: var(--fin-spend-glow);
+  box-shadow: 0 0 8px 1px var(--fin-spend);
+}
+
+.fin-dot-save {
+  background: var(--fin-save-glow);
+  box-shadow: 0 0 8px 1px var(--fin-save);
+}
+
+.fin-legend-label {
+  flex: 1;
+  color: var(--fin-text-muted);
+}
+
+.fin-legend-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  color: var(--fin-text);
+}
+
+.fin-legend-value.neg {
+  color: var(--fin-spend-glow);
+}
+
+.fin-legend-pct {
+  width: 3ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fin-text-muted);
+  font-size: 0.78rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fin-panel::before,
+  .fin-donut-wrap svg,
+  .fin-arc-pulse {
+    animation: none;
+  }
+}

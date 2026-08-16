@@ -10,6 +10,7 @@ import SummaryCards from "@/components/SummaryCards";
 import AddTransactionForm from "@/components/AddTransactionForm";
 import TransactionList from "@/components/TransactionList";
 import CategoryBreakdown from "@/components/CategoryBreakdown";
+import FinancePieChart from "@/components/FinancePieChart";
 
 // Reads live data from the database on every request.
 export const dynamic = "force-dynamic";
@@ -35,10 +36,13 @@ export default async function DashboardPage() {
       <SummaryCards summary={summary} />
 
       <div className="columns">
-        <section className="panel">
-          <h2>Add transaction</h2>
-          <AddTransactionForm categories={categories} />
-        </section>
+        <div>
+          <FinancePieChart summary={summary} />
+          <section className="panel">
+            <h2>Add transaction</h2>
+            <AddTransactionForm categories={categories} />
+          </section>
+        </div>
 
         <div>
           <section className="panel">
